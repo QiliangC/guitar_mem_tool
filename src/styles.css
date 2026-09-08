@@ -125,7 +125,8 @@ h1 {
 }
 
 .fret-numbers,
-.string-row {
+.string-row,
+.fret-markers {
   display: grid;
   grid-template-columns: 34px repeat(13, minmax(16px, 1fr));
   align-items: center;
@@ -138,7 +139,35 @@ h1 {
   text-align: center;
 }
 
+.fretboard {
+  position: relative;
+}
+
+.fret-markers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.fret-marker-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fret-marker {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 236, 200, 0.2);
+  border-radius: 999px;
+  background: #16110d;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 240, 208, 0.14);
+}
+
 .string-row {
+  position: relative;
+  z-index: 1;
   min-height: 34px;
 }
 
@@ -334,7 +363,8 @@ h1 {
   }
 
   .fret-numbers,
-  .string-row {
+  .string-row,
+  .fret-markers {
     grid-template-columns: 30px repeat(13, minmax(13px, 1fr));
   }
 

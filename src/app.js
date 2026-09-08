@@ -21,6 +21,8 @@ const difficultyDescriptions = {
   [DIFFICULTIES.HARD]: '全音 · 0–12 品',
 };
 
+const FRET_MARKER_FRETS = [3, 5, 7, 9];
+
 function formatMs(ms) {
   if (!ms) return '—';
   return `${(ms / 1000).toFixed(1)}s`;
@@ -59,6 +61,16 @@ function renderFretboard(question) {
         ${fretNumbers.map((fret) => `<span>${fret}</span>`).join('')}
       </div>
       <div class="fretboard">
+        <div class="fret-markers" aria-hidden="true">
+          <span class="string-label-spacer"></span>
+          ${fretNumbers
+            .map((fret) =>
+              FRET_MARKER_FRETS.includes(fret)
+                ? `<span class="fret-marker-cell"><span class="fret-marker" data-testid="fret-marker" data-fret-marker="${fret}"></span></span>`
+                : '<span></span>',
+            )
+            .join('')}
+        </div>
         ${STRINGS.map(
           ({ stringNumber }) => `
             <div class="string-row">

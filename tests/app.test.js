@@ -28,6 +28,9 @@ describe('app UI', () => {
     expect(document.querySelector('[data-string="6"][data-fret="0"]').className).toContain('active-note');
     expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('0');
     expect(document.querySelector('.string-label span')).toBeNull();
+    expect(
+      [...document.querySelectorAll('[data-testid="fret-marker"]')].map((marker) => marker.dataset.fretMarker),
+    ).toEqual(['3', '5', '7', '9']);
   });
 
   test('records a wrong answer, reveals the correct answer, and waits for Next', () => {
