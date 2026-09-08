@@ -150,11 +150,6 @@ h1 {
   font-size: 0.78rem;
 }
 
-.string-label span {
-  color: var(--gold);
-  font-weight: 800;
-}
-
 .fret-cell {
   position: relative;
   min-height: 34px;

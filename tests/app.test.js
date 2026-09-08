@@ -27,6 +27,7 @@ describe('app UI', () => {
     expect(document.querySelectorAll('[data-testid="answer-choice"]')).toHaveLength(4);
     expect(document.querySelector('[data-string="6"][data-fret="0"]').className).toContain('active-note');
     expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('0');
+    expect(document.querySelector('.string-label span')).toBeNull();
   });
 
   test('records a wrong answer, reveals the correct answer, and waits for Next', () => {

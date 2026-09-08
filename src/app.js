@@ -60,10 +60,10 @@ function renderFretboard(question) {
       </div>
       <div class="fretboard">
         ${STRINGS.map(
-          ({ stringNumber, openNote }) => `
+          ({ stringNumber }) => `
             <div class="string-row">
               <div class="string-label">
-                <b>${stringNumber}</b><span>${openNote}</span>
+                <b>${stringNumber}</b>
               </div>
               ${fretNumbers
                 .map((fret) => {
