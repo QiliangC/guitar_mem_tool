@@ -57,11 +57,11 @@ button {
 
 h1 {
   margin: 0;
-  max-width: 10ch;
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(2.5rem, 14vw, 4.7rem);
-  line-height: 0.86;
-  letter-spacing: -0.07em;
+  max-width: 12ch;
+  font-family: 'Fraunces', 'Noto Sans SC', Georgia, serif;
+  font-size: clamp(2.2rem, 12vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
 }
 
 .hero-copy {

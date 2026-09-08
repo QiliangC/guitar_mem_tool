@@ -23,6 +23,8 @@ describe('app UI', () => {
       autoAdvanceMs: 0,
     });
 
+    expect(document.querySelector('h1').textContent).toBe('指板音名训练');
+    expect(document.body.textContent).not.toContain('看到亮点，说出音名。');
     expect(document.querySelector('[data-testid="difficulty-simple"]').className).toContain('active');
     expect(document.querySelectorAll('[data-testid="answer-choice"]')).toHaveLength(4);
     expect(document.querySelector('[data-string="6"][data-fret="0"]').className).toContain('active-note');

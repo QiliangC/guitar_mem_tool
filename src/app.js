@@ -203,9 +203,9 @@ export function renderApp(root, options = {}) {
     root.innerHTML = `
       <div class="app-shell">
         <header class="hero">
-          <p class="eyebrow">FretNote / 12品固定音训练</p>
-          <h1>看到亮点，说出音名。</h1>
-          <p class="hero-copy">标准调弦 E A D G B E · 只用升号音名 · 四选一快速反应</p>
+          <p class="eyebrow">FretNote / 12品固定音</p>
+          <h1>指板音名训练</h1>
+          <p class="hero-copy">看位置，选音名。标准调弦 · 升号体系 · 四选一快速反应</p>
         </header>
 
         <section class="difficulty-panel" aria-label="难度选择">
