@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { DIFFICULTIES } from '../src/music.js';
 import { createQuestion, evaluateAnswer } from '../src/quiz.js';
 
 describe('quiz model', () => {
@@ -14,6 +15,14 @@ describe('quiz model', () => {
     expect(new Set(question.choices).size).toBe(4);
     expect(question.choices).toContain('E');
     expect(question.startedAt).toBeTypeOf('number');
+  });
+
+  test('uses only natural-note answer choices for simple and medium difficulties', () => {
+    const simpleQuestion = createQuestion({ difficulty: DIFFICULTIES.SIMPLE, rng: () => 0 });
+    const mediumQuestion = createQuestion({ difficulty: DIFFICULTIES.MEDIUM, rng: () => 0 });
+
+    expect(simpleQuestion.choices.every((choice) => !choice.includes('#'))).toBe(true);
+    expect(mediumQuestion.choices.every((choice) => !choice.includes('#'))).toBe(true);
   });
 
   test('evaluates a correct answer', () => {

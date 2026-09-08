@@ -1,4 +1,4 @@
-import { DIFFICULTIES, NOTES_SHARP, getPositionsForDifficulty } from './music.js';
+import { DIFFICULTIES, NATURAL_NOTES, NOTES_SHARP, getPositionsForDifficulty } from './music.js';
 
 function pickRandom(items, rng) {
   return items[Math.floor(rng() * items.length)];
@@ -13,9 +13,14 @@ function shuffled(items, rng) {
   return copy;
 }
 
-export function createChoices(correctNote, rng = Math.random) {
+function getAnswerPoolForDifficulty(difficulty) {
+  return difficulty === DIFFICULTIES.HARD ? NOTES_SHARP : NATURAL_NOTES;
+}
+
+export function createChoices(correctNote, rng = Math.random, answerPool = NOTES_SHARP) {
+  const usablePool = answerPool.includes(correctNote) ? answerPool : NOTES_SHARP;
   const distractors = shuffled(
-    NOTES_SHARP.filter((note) => note !== correctNote),
+    usablePool.filter((note) => note !== correctNote),
     rng,
   ).slice(0, 3);
 
@@ -34,7 +39,7 @@ export function createQuestion({
   return {
     position,
     correctNote: position.note,
-    choices: createChoices(position.note, rng),
+    choices: createChoices(position.note, rng, getAnswerPoolForDifficulty(difficulty)),
     startedAt: now(),
   };
 }
