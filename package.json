@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "latest",
+    "jsdom": "^30.0.1",
     "vite": "latest",
     "vitest": "latest"
   }
