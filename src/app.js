@@ -53,6 +53,7 @@ function renderDifficultyControls(activeDifficulty) {
 
 function renderFretboard(question) {
   const fretNumbers = Array.from({ length: 13 }, (_, fret) => fret);
+  const displayStrings = [...STRINGS].reverse();
 
   return `
     <section class="fretboard-card" aria-label="吉他指板">
@@ -71,9 +72,9 @@ function renderFretboard(question) {
             )
             .join('')}
         </div>
-        ${STRINGS.map(
-          ({ stringNumber }) => `
-            <div class="string-row">
+        ${displayStrings.map(
+          ({ stringNumber }, index) => `
+            <div class="string-row ${index === 0 || index === displayStrings.length - 1 ? 'edge-string' : ''}">
               <div class="string-label">
                 <b>${stringNumber}</b>
               </div>

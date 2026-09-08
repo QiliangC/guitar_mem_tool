@@ -30,6 +30,14 @@ describe('app UI', () => {
     expect(document.querySelector('[data-string="6"][data-fret="0"]').className).toContain('active-note');
     expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('0');
     expect(document.querySelector('.string-label span')).toBeNull();
+    expect([...document.querySelectorAll('.string-label b')].map((label) => label.textContent)).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
     expect(
       [...document.querySelectorAll('[data-testid="fret-marker"]')].map((marker) => marker.dataset.fretMarker),
     ).toEqual(['3', '5', '7', '9']);

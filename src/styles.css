@@ -196,8 +196,7 @@ h1 {
   box-shadow: 0 0 5px rgba(255, 246, 229, 0.32);
 }
 
-.string-row:nth-child(1) .fret-cell::before,
-.string-row:nth-child(6) .fret-cell::before {
+.string-row.edge-string .fret-cell::before {
   height: 1.5px;
 }
 
