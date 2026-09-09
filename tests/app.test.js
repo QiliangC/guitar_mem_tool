@@ -97,4 +97,100 @@ describe('app UI', () => {
     expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('1');
     expect(document.querySelector('[data-testid="session-accuracy"]').textContent).toBe('0%');
   });
+
+  test('builds an E-major C form from a root anchor and grades the whole shape', () => {
+    const app = renderApp(document.querySelector('#app'), {
+      rng: () => 0,
+      now: () => 3_000,
+      storage: createStorage(),
+      autoAdvanceMs: 0,
+    });
+
+    document.querySelector('[data-testid="content-degree"]').click();
+
+    expect(document.querySelector('[data-testid="tonic-select"]').value).toBe('E');
+    expect(document.querySelector('[data-testid="shape-C"]').className).toContain('active');
+    expect(document.querySelector('[data-testid="layer-triad"]').className).toContain('active');
+    expect(document.querySelector('[data-fret="4"]')).not.toBeNull();
+    expect(document.querySelector('[data-fret="3"]')).toBeNull();
+
+    document.querySelector('[data-string="6"][data-fret="5"]').click();
+    expect(document.querySelector('[data-testid="feedback"]').textContent).toContain('不是 1');
+
+    document.querySelector('[data-string="5"][data-fret="7"]').click();
+    expect(document.querySelector('[data-testid="submit-build"]')).not.toBeNull();
+
+    const { requiredPositions } = app.getState().question;
+    for (const position of requiredPositions) {
+      if (position.stringNumber === 5 && position.fret === 7) continue;
+      document.querySelector(`[data-string="${position.stringNumber}"][data-fret="${position.fret}"]`).click();
+    }
+    document.querySelector('[data-testid="submit-build"]').click();
+
+    expect(document.querySelector('[data-testid="feedback"]').textContent).toContain('全对');
+    expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('1');
+  });
+
+  test('switches C/G forms and trains all seven scale degrees', () => {
+    renderApp(document.querySelector('#app'), {
+      rng: () => 0,
+      now: () => 3_000,
+      storage: createStorage(),
+      autoAdvanceMs: 0,
+    });
+
+    document.querySelector('[data-testid="content-degree"]').click();
+    document.querySelector('[data-testid="shape-G"]').click();
+    document.querySelector('[data-testid="layer-full"]').click();
+    document.querySelector('[data-testid="mode-identify"]').click();
+
+    expect(document.querySelector('[data-testid="shape-G"]').className).toContain('active');
+    expect(document.querySelector('[data-testid="layer-full"]').className).toContain('active');
+    expect(document.querySelectorAll('[data-testid="answer-choice"]')).toHaveLength(4);
+    expect(document.querySelector('[data-fret="9"]')).not.toBeNull();
+    expect(document.querySelector('[data-fret="12"]')).not.toBeNull();
+  });
+
+  test('can let the system choose both tonic and C/G form', () => {
+    renderApp(document.querySelector('#app'), {
+      rng: () => 0.5,
+      now: () => 3_000,
+      storage: createStorage(),
+      autoAdvanceMs: 0,
+    });
+
+    document.querySelector('[data-testid="content-degree"]').click();
+    document.querySelector('[data-testid="auto-setup"]').click();
+
+    expect(document.querySelector('[data-testid="auto-setup"]').className).toContain('active');
+    expect(document.querySelector('[data-testid="tonic-select"]').value).toBe('F#');
+    expect(document.querySelector('[data-testid="tonic-select"]').disabled).toBe(true);
+    expect(document.querySelector('[data-testid="shape-G"]').className).toContain('active');
+  });
+
+  test('plays a short numbered melody in order and distinguishes the high octave', () => {
+    const app = renderApp(document.querySelector('#app'), {
+      rng: () => 0.5,
+      now: () => 3_000,
+      storage: createStorage(),
+      autoAdvanceMs: 0,
+    });
+
+    document.querySelector('[data-testid="content-degree"]').click();
+    document.querySelector('[data-testid="mode-melody"]').click();
+
+    expect(document.querySelector('[data-testid="layer-full"]').className).toContain('active');
+    document.querySelector('[data-string="6"][data-fret="4"]').click();
+    expect(document.querySelector('[data-testid="feedback"]').textContent).toContain('不是 1');
+
+    document.querySelector('[data-string="5"][data-fret="7"]').click();
+    expect(document.querySelector('[data-testid="melody-line"] .degree-token.high')).not.toBeNull();
+
+    for (const position of app.getState().question.pathPositions.slice(1)) {
+      document.querySelector(`[data-string="${position.stringNumber}"][data-fret="${position.fret}"]`).click();
+    }
+
+    expect(document.querySelector('[data-testid="feedback"]').textContent).toContain('完成率 100%');
+    expect(document.querySelector('[data-testid="session-attempts"]').textContent).toBe('1');
+  });
 });

@@ -1,6 +1,18 @@
 import { describe, expect, test } from 'vitest';
-import { DIFFICULTIES } from '../src/music.js';
-import { createLocateQuestion, createQuestion, evaluateAnswer, evaluateLocateAnswer } from '../src/quiz.js';
+import { DIFFICULTIES, SCALE_LAYERS } from '../src/music.js';
+import {
+  createDegreeLocateQuestion,
+  createDegreeQuestion,
+  createLocateQuestion,
+  createMelodyQuestion,
+  createQuestion,
+  createShapeBuildQuestion,
+  evaluateAnswer,
+  evaluateDegreeAnswer,
+  evaluateLocateAnswer,
+  evaluateMelodyAnswer,
+  MELODY_PATTERNS,
+} from '../src/quiz.js';
 
 describe('quiz model', () => {
   test('creates a four-choice question that includes the correct note', () => {
@@ -113,6 +125,64 @@ describe('quiz model', () => {
       selectedNote: 'G',
       correctNote: 'F#',
       responseMs: 900,
+    });
+  });
+
+  test('creates a balanced degree-identify question inside the selected CAGED form', () => {
+    const question = createDegreeQuestion({
+      tonic: 'E',
+      shapeId: 'C',
+      layer: SCALE_LAYERS.FULL,
+      rng: () => 0,
+      now: () => 2_000,
+    });
+    expect(question.position.fret).toBeGreaterThanOrEqual(4);
+    expect(question.position.fret).toBeLessThanOrEqual(7);
+    expect(question.choices).toHaveLength(4);
+    expect(question.choices).toContain(question.correctDegree);
+    expect(evaluateDegreeAnswer(question, question.correctDegree, 2_500)).toMatchObject({
+      isCorrect: true,
+      responseMs: 500,
+    });
+  });
+
+  test('creates locate and build questions from the same seven-note shape model', () => {
+    const locate = createDegreeLocateQuestion({
+      tonic: 'E',
+      shapeId: 'G',
+      layer: SCALE_LAYERS.PENTATONIC,
+      rng: () => 0,
+    });
+    expect([1, 2, 3, 5, 6]).toContain(locate.targetDegree);
+    expect(locate.requiredPositions.every((position) => position.degree === locate.targetDegree)).toBe(true);
+
+    const build = createShapeBuildQuestion({ tonic: 'E', shapeId: 'C', layer: SCALE_LAYERS.FULL });
+    expect(new Set(build.requiredPositions.map((position) => position.degree))).toEqual(
+      new Set([1, 2, 3, 4, 5, 6, 7]),
+    );
+  });
+
+  test('maps one of sixteen short melodies onto an exact CAGED path with octave marks', () => {
+    const values = [8 / 16, 0];
+    const question = createMelodyQuestion({
+      tonic: 'E',
+      shapeId: 'C',
+      layer: SCALE_LAYERS.FULL,
+      rng: () => values.shift() ?? 0,
+      now: () => 1_000,
+    });
+    expect(MELODY_PATTERNS).toHaveLength(16);
+    expect(question.melodyIndex).toBe(8);
+    expect(question.notation[0]).toEqual({ degree: 1, octaveOffset: 0 });
+    expect(question.notation.at(-1)).toEqual({ degree: 1, octaveOffset: 1 });
+    expect(question.pathPositions).toHaveLength(8);
+
+    const keys = question.pathPositions.map((position) => `${position.stringNumber}:${position.fret}`);
+    expect(evaluateMelodyAnswer(question, keys, 1, 2_000)).toMatchObject({
+      isCorrect: false,
+      completionPercent: 100,
+      wrongCount: 1,
+      responseMs: 1_000,
     });
   });
 });

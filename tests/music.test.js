@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import {
   DIFFICULTIES,
+  SCALE_LAYERS,
+  getCagedPositionsForLayer,
+  getCagedShapeFretRange,
+  getCagedShapePositions,
+  getMajorScaleDegree,
+  getMajorScaleNotes,
   getNoteAt,
   getPositionKey,
   getPositionsForDifficulty,
@@ -92,5 +98,43 @@ describe('music model', () => {
       fret: 2,
       note: 'F#',
     });
+  });
+
+  test('maps notes to scale degrees in an E major context', () => {
+    expect(getMajorScaleNotes('E')).toEqual(['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#']);
+    expect(getMajorScaleDegree('E', 'E')).toBe(1);
+    expect(getMajorScaleDegree('G#', 'E')).toBe(3);
+    expect(getMajorScaleDegree('D#', 'E')).toBe(7);
+    expect(getMajorScaleDegree('G', 'E')).toBeNull();
+  });
+
+  test('places the movable E-major C and G forms around their root anchors', () => {
+    expect(getCagedShapeFretRange('E', 'C')).toEqual({
+      startFret: 4,
+      endFret: 7,
+      anchorFret: 7,
+      anchorString: 5,
+    });
+    expect(getCagedShapeFretRange('E', 'G')).toEqual({
+      startFret: 9,
+      endFret: 12,
+      anchorFret: 12,
+      anchorString: 6,
+    });
+    expect(getCagedShapePositions({ tonic: 'E', shapeId: 'C' })).toContainEqual(
+      expect.objectContaining({ stringNumber: 5, fret: 7, note: 'E', degree: 1, shapeId: 'C' }),
+    );
+    expect(getCagedShapePositions({ tonic: 'E', shapeId: 'G' })).toContainEqual(
+      expect.objectContaining({ stringNumber: 3, fret: 9, note: 'E', degree: 1, shapeId: 'G' }),
+    );
+  });
+
+  test('builds triad, pentatonic, and full-scale layers from one seven-note shape', () => {
+    const degreesFor = (layer) => new Set(
+      getCagedPositionsForLayer({ tonic: 'E', shapeId: 'C', layer }).map((position) => position.degree),
+    );
+    expect(degreesFor(SCALE_LAYERS.TRIAD)).toEqual(new Set([1, 3, 5]));
+    expect(degreesFor(SCALE_LAYERS.PENTATONIC)).toEqual(new Set([1, 2, 3, 5, 6]));
+    expect(degreesFor(SCALE_LAYERS.FULL)).toEqual(new Set([1, 2, 3, 4, 5, 6, 7]));
   });
 });
