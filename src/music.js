@@ -61,3 +61,21 @@ export function getPositionsForDifficulty(difficulty) {
 
   return positions;
 }
+
+export function getPositionKey(position) {
+  return `${position.stringNumber}:${position.fret}`;
+}
+
+export function parsePositionKey(positionKey) {
+  const [stringNumber, fret] = positionKey.split(':').map(Number);
+  return { stringNumber, fret };
+}
+
+export function getTargetNotesForDifficulty(difficulty) {
+  const noteSet = new Set(getPositionsForDifficulty(difficulty).map((position) => position.note));
+  return NOTES_SHARP.filter((note) => noteSet.has(note));
+}
+
+export function getPositionsForTargetNote(difficulty, targetNote) {
+  return getPositionsForDifficulty(difficulty).filter((position) => position.note === targetNote);
+}

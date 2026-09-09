@@ -1,10 +1,16 @@
 export const STORAGE_KEY = 'guitar-fret-note-trainer:aggregate-stats:v1';
 
+function getCompletionPercent(result) {
+  return result.completionPercent ?? (result.isCorrect ? 100 : 0);
+}
+
 function withDerivedSessionStats(stats) {
   return {
     ...stats,
     accuracy: stats.attempts === 0 ? 0 : Math.round((stats.correct / stats.attempts) * 100),
     averageResponseMs: stats.attempts === 0 ? 0 : Math.round(stats.totalResponseMs / stats.attempts),
+    averageCompletionPercent:
+      stats.attempts === 0 ? 0 : Math.round(stats.totalCompletionPercent / stats.attempts),
   };
 }
 
@@ -14,6 +20,8 @@ function withDerivedAggregateStats(stats) {
     accuracy: stats.totalAttempts === 0 ? 0 : Math.round((stats.totalCorrect / stats.totalAttempts) * 100),
     averageResponseMs:
       stats.totalAttempts === 0 ? 0 : Math.round(stats.totalResponseMs / stats.totalAttempts),
+    averageCompletionPercent:
+      stats.totalAttempts === 0 ? 0 : Math.round(stats.totalCompletionPercent / stats.totalAttempts),
   };
 }
 
@@ -24,6 +32,7 @@ export function createSessionStats() {
     streak: 0,
     bestStreak: 0,
     totalResponseMs: 0,
+    totalCompletionPercent: 0,
   });
 }
 
@@ -35,6 +44,7 @@ export function recordSessionAnswer(stats, result) {
     streak,
     bestStreak: Math.max(stats.bestStreak, streak),
     totalResponseMs: stats.totalResponseMs + result.responseMs,
+    totalCompletionPercent: stats.totalCompletionPercent + getCompletionPercent(result),
   });
 }
 
@@ -43,6 +53,7 @@ export function createAggregateStats() {
     totalAttempts: 0,
     totalCorrect: 0,
     totalResponseMs: 0,
+    totalCompletionPercent: 0,
     currentStreak: 0,
     bestStreak: 0,
     lastPracticedAt: null,
@@ -55,6 +66,7 @@ export function recordAggregateAnswer(stats, result, now = new Date()) {
     totalAttempts: stats.totalAttempts + 1,
     totalCorrect: stats.totalCorrect + (result.isCorrect ? 1 : 0),
     totalResponseMs: stats.totalResponseMs + result.responseMs,
+    totalCompletionPercent: stats.totalCompletionPercent + getCompletionPercent(result),
     currentStreak,
     bestStreak: Math.max(stats.bestStreak, currentStreak),
     lastPracticedAt: now.toISOString(),

@@ -2,9 +2,13 @@ import { describe, expect, test } from 'vitest';
 import {
   DIFFICULTIES,
   getNoteAt,
+  getPositionKey,
   getPositionsForDifficulty,
+  getPositionsForTargetNote,
+  getTargetNotesForDifficulty,
   isNaturalNote,
   LANDMARK_FRETS,
+  parsePositionKey,
 } from '../src/music.js';
 
 describe('music model', () => {
@@ -50,5 +54,43 @@ describe('music model', () => {
     expect(positions).toHaveLength(78);
     expect(positions).toContainEqual({ stringNumber: 6, openNote: 'E', fret: 9, note: 'C#' });
     expect(positions).toContainEqual({ stringNumber: 1, openNote: 'E', fret: 12, note: 'E' });
+  });
+
+  test('creates and parses stable position keys', () => {
+    expect(getPositionKey({ stringNumber: 4, fret: 3 })).toBe('4:3');
+    expect(parsePositionKey('4:3')).toEqual({ stringNumber: 4, fret: 3 });
+  });
+
+  test('gets available target notes for each difficulty', () => {
+    expect(getTargetNotesForDifficulty(DIFFICULTIES.SIMPLE)).toEqual(['C', 'D', 'E', 'F', 'G', 'A', 'B']);
+    expect(getTargetNotesForDifficulty(DIFFICULTIES.MEDIUM)).toEqual(['C', 'D', 'E', 'F', 'G', 'A', 'B']);
+    expect(getTargetNotesForDifficulty(DIFFICULTIES.HARD)).toEqual([
+      'C',
+      'C#',
+      'D',
+      'D#',
+      'E',
+      'F',
+      'F#',
+      'G',
+      'G#',
+      'A',
+      'A#',
+      'B',
+    ]);
+  });
+
+  test('finds target note positions inside a difficulty pool', () => {
+    expect(getPositionsForTargetNote(DIFFICULTIES.SIMPLE, 'F')).toEqual([
+      { stringNumber: 4, openNote: 'D', fret: 3, note: 'F' },
+    ]);
+
+    expect(getPositionsForTargetNote(DIFFICULTIES.MEDIUM, 'F#')).toEqual([]);
+    expect(getPositionsForTargetNote(DIFFICULTIES.HARD, 'F#')).toContainEqual({
+      stringNumber: 6,
+      openNote: 'E',
+      fret: 2,
+      note: 'F#',
+    });
   });
 });

@@ -36,23 +36,27 @@ describe('stats model', () => {
       totalResponseMs: 6_000,
       accuracy: 67,
       averageResponseMs: 2_000,
+      totalCompletionPercent: 200,
+      averageCompletionPercent: 67,
     });
   });
 
   test('records aggregate stats for long-term local history', () => {
     let stats = createAggregateStats();
 
-    stats = recordAggregateAnswer(stats, { isCorrect: true, responseMs: 800 });
-    stats = recordAggregateAnswer(stats, { isCorrect: true, responseMs: 1_200 });
+    stats = recordAggregateAnswer(stats, { isCorrect: true, responseMs: 800, completionPercent: 100 });
+    stats = recordAggregateAnswer(stats, { isCorrect: true, responseMs: 1_200, completionPercent: 50 });
 
     expect(stats).toMatchObject({
       totalAttempts: 2,
       totalCorrect: 2,
       totalResponseMs: 2_000,
+      totalCompletionPercent: 150,
       bestStreak: 2,
       currentStreak: 2,
       accuracy: 100,
       averageResponseMs: 1_000,
+      averageCompletionPercent: 75,
     });
     expect(stats.lastPracticedAt).toBeTypeOf('string');
   });

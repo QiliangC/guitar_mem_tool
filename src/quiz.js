@@ -1,4 +1,12 @@
-import { DIFFICULTIES, NATURAL_NOTES, NOTES_SHARP, getPositionsForDifficulty } from './music.js';
+import {
+  DIFFICULTIES,
+  NATURAL_NOTES,
+  NOTES_SHARP,
+  getPositionKey,
+  getPositionsForDifficulty,
+  getPositionsForTargetNote,
+  getTargetNotesForDifficulty,
+} from './music.js';
 
 function pickRandom(items, rng) {
   return items[Math.floor(rng() * items.length)];
@@ -49,6 +57,43 @@ export function evaluateAnswer(question, selectedNote, answeredAt = Date.now()) 
     isCorrect: selectedNote === question.correctNote,
     selectedNote,
     correctNote: question.correctNote,
+    responseMs: Math.max(0, answeredAt - question.startedAt),
+  };
+}
+
+export function createLocateQuestion({ difficulty = DIFFICULTIES.SIMPLE, rng = Math.random, now = Date.now } = {}) {
+  const targetNotes = getTargetNotesForDifficulty(difficulty);
+  const targetNote = pickRandom(targetNotes, rng);
+
+  return {
+    targetNote,
+    requiredPositions: getPositionsForTargetNote(difficulty, targetNote),
+    startedAt: now(),
+  };
+}
+
+export function evaluateLocateAnswer(question, selectedKeys, answeredAt = Date.now()) {
+  const requiredKeys = question.requiredPositions.map(getPositionKey);
+  const requiredKeySet = new Set(requiredKeys);
+  const uniqueSelectedKeys = [...new Set(selectedKeys)];
+  const correctKeys = uniqueSelectedKeys.filter((key) => requiredKeySet.has(key));
+  const wrongKeys = uniqueSelectedKeys.filter((key) => !requiredKeySet.has(key));
+  const selectedKeySet = new Set(uniqueSelectedKeys);
+  const missedKeys = requiredKeys.filter((key) => !selectedKeySet.has(key));
+  const requiredCount = requiredKeys.length;
+
+  return {
+    isCorrect: wrongKeys.length === 0 && missedKeys.length === 0,
+    targetNote: question.targetNote,
+    selectedKeys: uniqueSelectedKeys,
+    correctKeys,
+    wrongKeys,
+    missedKeys,
+    correctSelectedCount: correctKeys.length,
+    requiredCount,
+    wrongCount: wrongKeys.length,
+    missedCount: missedKeys.length,
+    completionPercent: requiredCount === 0 ? 0 : Math.round((correctKeys.length / requiredCount) * 100),
     responseMs: Math.max(0, answeredAt - question.startedAt),
   };
 }

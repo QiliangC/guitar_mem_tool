@@ -43,6 +43,41 @@ describe('app UI', () => {
     ).toEqual(['3', '5', '7', '9']);
   });
 
+  test('switches to reverse mode, selects positions, clears them, and submits feedback', () => {
+    renderApp(document.querySelector('#app'), {
+      rng: () => 0,
+      now: () => 3_000,
+      storage: createStorage(),
+      autoAdvanceMs: 0,
+    });
+
+    document.querySelector('[data-testid="mode-locate"]').click();
+
+    expect(document.querySelector('[data-testid="target-note"]').textContent).toBe('C');
+    expect(document.querySelector('[data-testid="submit-locate"]')).not.toBeNull();
+
+    document.querySelector('[data-string="5"][data-fret="3"]').click();
+    document.querySelector('[data-string="2"][data-fret="6"]').click();
+
+    expect(document.querySelector('[data-string="5"][data-fret="3"]').className).toContain('selected-position');
+    expect(document.querySelector('[data-string="2"][data-fret="6"]').className).toContain('selected-position');
+
+    document.querySelector('[data-testid="clear-locate"]').click();
+
+    expect(document.querySelector('[data-string="5"][data-fret="3"]').className).not.toContain('selected-position');
+    expect(document.querySelector('[data-string="2"][data-fret="6"]').className).not.toContain('selected-position');
+
+    document.querySelector('[data-string="5"][data-fret="3"]').click();
+    document.querySelector('[data-string="2"][data-fret="6"]').click();
+    document.querySelector('[data-testid="submit-locate"]').click();
+
+    expect(document.querySelector('[data-string="5"][data-fret="3"]').className).toContain('correct-position');
+    expect(document.querySelector('[data-string="2"][data-fret="6"]').className).toContain('wrong-position');
+    expect(document.querySelector('[data-string="3"][data-fret="5"]').className).toContain('missed-position');
+    expect(document.querySelector('[data-testid="feedback"]').textContent).toContain('完成率 50%');
+    expect(document.querySelector('[data-testid="next-question"]')).not.toBeNull();
+  });
+
   test('records a wrong answer, reveals the correct answer, and waits for Next', () => {
     renderApp(document.querySelector('#app'), {
       rng: () => 0,
