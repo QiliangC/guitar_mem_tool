@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="指板音名训练图标">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#17130f" />
+      <stop offset="0.55" stop-color="#432514" />
+      <stop offset="1" stop-color="#a86b37" />
+    </linearGradient>
+    <radialGradient id="glow" cx="65%" cy="33%" r="55%">
+      <stop offset="0" stop-color="#f4c34d" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#f4c34d" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <rect width="512" height="512" rx="112" fill="url(#glow)" />
+  <g transform="translate(72 126)">
+    <rect x="0" y="0" width="368" height="260" rx="34" fill="#6f4122" stroke="#f3d7a3" stroke-opacity="0.28" stroke-width="8" />
+    <g stroke="#fff1d8" stroke-linecap="round" opacity="0.86">
+      <path d="M44 50h280" stroke-width="5" />
+      <path d="M44 82h280" stroke-width="4" />
+      <path d="M44 114h280" stroke-width="4" />
+      <path d="M44 146h280" stroke-width="4" />
+      <path d="M44 178h280" stroke-width="4" />
+      <path d="M44 210h280" stroke-width="5" />
+    </g>
+    <g stroke="#1b1209" stroke-opacity="0.5" stroke-width="5">
+      <path d="M96 28v204" />
+      <path d="M148 28v204" />
+      <path d="M200 28v204" />
+      <path d="M252 28v204" />
+      <path d="M304 28v204" />
+    </g>
+    <circle cx="200" cy="114" r="34" fill="#f4c34d" stroke="#fff1d8" stroke-width="8" />
+    <circle cx="148" cy="178" r="14" fill="#17130f" opacity="0.88" />
+    <circle cx="252" cy="82" r="14" fill="#17130f" opacity="0.88" />
+  </g>
+</svg>

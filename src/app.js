@@ -1,5 +1,6 @@
 import './styles.css';
 import { DIFFICULTIES, STRINGS, getPositionKey } from './music.js';
+import { registerPwa } from './pwa.js';
 import { createLocateQuestion, createQuestion, evaluateAnswer, evaluateLocateAnswer } from './quiz.js';
 import {
   createSessionStats,
@@ -411,6 +412,7 @@ function boot() {
   if (root && !root.dataset.booted) {
     root.dataset.booted = 'true';
     renderApp(root);
+    registerPwa({ enabled: import.meta.env.PROD });
   }
 }
 
